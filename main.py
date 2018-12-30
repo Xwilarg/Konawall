@@ -6,6 +6,7 @@ import os
 import ctypes
 import time
 import json
+from pathlib import Path
 
 def GetImageUrl(maxPage, counter, allowNsfw, tags):
 	xmlContent = xml.etree.ElementTree.fromstring(urllib.request.urlopen("https://konachan.com/post.xml?limit=1&page=" + str(random.randint(0, maxPage + 1)) + "&tags=" + tags).read())[0]
@@ -13,8 +14,7 @@ def GetImageUrl(maxPage, counter, allowNsfw, tags):
 		if counter == 0:
 			print("No image found after 10 iterations. That may mean there is no safe image available with the tags you choosed")
 			return (None)
-		else:
-			return (GetImageUrl(maxPage, counter - 1, allowNsfw, tags))
+		return (GetImageUrl(maxPage, counter - 1, allowNsfw, tags))
 	url = xmlContent.get("file_url")
 	fileName = "wallpaper." + url.split('.')[-1]
 	urllib.request.urlretrieve(url, fileName)
@@ -32,17 +32,15 @@ def GetImage():
 	if maxPage == 0:
 		print("There is no image with the tags you specified, please correct them on the configuration file")
 		return (None)
-	image = GetImageUrl(maxPage, 10, allowNsfw, tags)
-	if image is not None:
-		print("Done, cleaning...")
-	return (image)
+	return (GetImageUrl(maxPage, 10, allowNsfw, tags))
 
 if __name__ == "__main__":
-	if os.name == 'nt':
-		fileName = GetImage()
-		if fileName is not None:
+	for path in Path(".").glob("wallpaper*"):
+		os.remove(path)
+	fileName = GetImage()
+	if fileName is not None:
+		if os.name == 'nt':
 			ctypes.windll.user32.SystemParametersInfoW(20, 0, os.path.dirname(os.path.realpath(__file__)) + "\\" + fileName, 0)
-			time.sleep(2)
-			os.remove(fileName)
-	else:
-		print("Your OS is not supported")
+		else:
+			os.system("gsettings set org.gnome.desktop.background picture-uri " + os.path.dirname(os.path.realpath(__file__)) + "/" + fileName)
+	print("The wallpaper was saved as " + fileName)
