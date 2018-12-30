@@ -1,5 +1,6 @@
 {
 
-	"allowNsfw" : 0
+	"allowNsfw" : 0,
+	"tags" : ""
 
 }
