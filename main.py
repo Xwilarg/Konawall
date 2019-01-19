@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import urllib.request
+import urllib.parse
 import xml.etree.ElementTree
 import random
 import os
@@ -10,7 +11,7 @@ import ssl
 from pathlib import Path
 
 def GetImageUrl(maxPage, counter, allowNsfw, tags):
-	xmlContent = xml.etree.ElementTree.fromstring(urllib.request.urlopen("https://konachan.com/post.xml?limit=1&page=" + str(random.randint(0, maxPage + 1)) + "&tags=" + tags).read())[0]
+	xmlContent = xml.etree.ElementTree.fromstring(urllib.request.urlopen("https://konachan.com/post.xml?limit=1&page=" + str(random.randint(0, maxPage + 1)) + "&tags=" + urllib.parse.quote(tags)).read())[0]
 	if not allowNsfw and xmlContent.get("rating") != "s":
 		if counter == 0:
 			print("No image found after 10 iterations. That may mean there is no safe image available with the tags you choosed")
@@ -29,7 +30,7 @@ def GetImage():
 	print("Allow NSFW: " + str(allowNsfw))
 	print("Tags: " + ("None" if (tags == "") else tags))
 	print("\nDownloading image...")
-	maxPage = int(xml.etree.ElementTree.fromstring(urllib.request.urlopen("https://konachan.com/post.xml?limit=1&tags=" + tags).read()).get("count"))
+	maxPage = int(xml.etree.ElementTree.fromstring(urllib.request.urlopen("https://konachan.com/post.xml?limit=1&tags=" + urllib.parse.quote(tags)).read()).get("count"))
 	if maxPage == 0:
 		print("There is no image with the tags you specified, please correct them on the configuration file")
 		return (None)
