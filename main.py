@@ -6,6 +6,7 @@ import os
 import ctypes
 import time
 import json
+import ssl
 from pathlib import Path
 
 def GetImageUrl(maxPage, counter, allowNsfw, tags):
@@ -35,6 +36,7 @@ def GetImage():
 	return (GetImageUrl(maxPage, 10, allowNsfw, tags))
 
 if __name__ == "__main__":
+	ssl._create_default_https_context = ssl._create_unverified_context
 	for path in Path(".").glob("wallpaper*"):
 		os.remove(path)
 	fileName = GetImage()
