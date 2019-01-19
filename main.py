@@ -43,4 +43,4 @@ if __name__ == "__main__":
 			ctypes.windll.user32.SystemParametersInfoW(20, 0, os.path.dirname(os.path.realpath(__file__)) + "\\" + fileName, 0)
 		else:
 			os.system("gsettings set org.gnome.desktop.background picture-uri " + os.path.dirname(os.path.realpath(__file__)) + "/" + fileName)
-	print("The wallpaper was saved as " + fileName)
+		print("The wallpaper was saved as " + fileName)
